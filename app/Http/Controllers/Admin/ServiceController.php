@@ -21,7 +21,7 @@ class ServiceController extends Controller
     {
         $validatedData = $request->validate([
             'service_name' => 'required|unique:services|max:100',
-            'jop_name' => 'required|max:100',
+            'jop_name' => 'required|unique|max:100',
             'image' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
         $imagePath = null;
