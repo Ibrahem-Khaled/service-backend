@@ -21,30 +21,43 @@ class ServiceController extends Controller
     {
         $validatedData = $request->validate([
             'service_name' => 'required|unique:services|max:100',
-            'jop_name' => 'required|unique|max:100',
+            'job_name' => 'required|unique:services|max:100',
             'image' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+        ], [
+            'service_name.required' => 'The service name field is required.',
+            'service_name.unique' => 'The service name has already been taken.',
+            'service_name.max' => 'The service name may not be greater than :max characters.',
+            'job_name.required' => 'The job name field is required.',
+            'job_name.unique' => 'The job name has already been taken.',
+            'job_name.max' => 'The job name may not be greater than :max characters.',
+            'image.image' => 'The file must be an image.',
+            'image.mimes' => 'The image must be a file of type: jpeg, png, jpg, gif.',
+            'image.max' => 'The image may not be greater than :max kilobytes.',
         ]);
+    
         $imagePath = null;
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->move('services/images', $request->file('image')->getClientOriginalName());
             if (!$imagePath) {
-                return back()->withInput()->withErrors(['image' => 'حدثت مشكلة أثناء تحميل الصورة.']);
+                return back()->withInput()->withErrors(['image' => 'An error occurred while uploading the image.']);
             }
         }
+    
         $service = Service::create([
             'service_name' => $validatedData['service_name'],
-            'jop_name' => $validatedData['jop_name'],
+            'job_name' => $validatedData['job_name'],
             'image' => $imagePath,
         ]);
+    
         if ($service) {
-            toastr()->success('تم حفظ البيانات بنجاح');
+            toastr()->success('Data saved successfully');
             return back();
         } else {
-            toastr()->error('يوجد مشكل حاليا، حاول مرة أخرى');
+            toastr()->error('There is a problem right now, please try again');
             return back();
         }
     }
-
+    
     public function update(Request $request, int $sr)
     {
         $validatedData = $request->validate([
@@ -53,31 +66,44 @@ class ServiceController extends Controller
                 Rule::unique('services')->ignore($sr),
                 'max:100',
             ],
-            'jop_name' => 'required|max:100',
+            'job_name' => 'required|max:100',
             'image' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+        ], [
+            'service_name.required' => 'The service name field is required.',
+            'service_name.unique' => 'The service name has already been taken.',
+            'service_name.max' => 'The service name may not be greater than :max characters.',
+            'job_name.required' => 'The job name field is required.',
+            'job_name.max' => 'The job name may not be greater than :max characters.',
+            'image.image' => 'The file must be an image.',
+            'image.mimes' => 'The image must be a file of type: jpeg, png, jpg, gif.',
+            'image.max' => 'The image may not be greater than :max kilobytes.',
         ]);
+    
         $service = Service::findOrFail($sr);
         $imagePath = $service->image;
+    
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->move('services/images', $request->file('image')->getClientOriginalName());
             if (!$imagePath) {
-                return back()->withInput()->withErrors(['image' => 'حدثت مشكلة أثناء تحميل الصورة.']);
+                return back()->withInput()->withErrors(['image' => 'An error occurred while uploading the image.']);
             }
         }
+    
         $service->update([
             'service_name' => $validatedData['service_name'],
-            'jop_name' => $validatedData['jop_name'],
+            'job_name' => $validatedData['job_name'],
             'image' => $imagePath,
         ]);
+    
         if ($service) {
-            toastr()->success('تم تحديث البيانات بنجاح');
+            toastr()->success('Data updated successfully');
             return back();
         } else {
-            toastr()->error('يوجد مشكل حاليا، حاول مرة أخرى');
+            toastr()->error('There is a problem right now, please try again');
             return back();
         }
     }
-
+    
     public function delete(Request $request, int $sr)
     {
 
