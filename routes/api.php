@@ -8,7 +8,9 @@ use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-
+Route::group(['prefix'=>'home'],function($router){
+    Route::get('/show',[ServicesController::class,'showHome']);
+});
 Route::group(['prefix'=>'services'],function($router){
     Route::get('/show',[ServicesController::class,'show']);
     Route::get('/show/{service}',[ServicesController::class,'serviceDetails']);
