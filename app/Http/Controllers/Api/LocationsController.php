@@ -32,7 +32,5 @@ class LocationsController extends Controller
             'location' => $data
         ], 200);
 
-
-
     }
 }

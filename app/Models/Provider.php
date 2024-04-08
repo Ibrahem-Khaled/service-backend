@@ -27,7 +27,8 @@ class Provider extends Authenticatable implements JWTSubject
         'type',
         'user_password',
         'location_id',
-        'service_id'
+        'service_id',
+        'years_experience'
 
     ];
     public function locations(){
@@ -35,6 +36,9 @@ class Provider extends Authenticatable implements JWTSubject
       }
       public function services(){
         return $this->belongsTo(Service::class,'service_id');
+      }
+      public function gallery(){
+        return $this->hasMany(Gallery::class,'provider_id');
       }
 
     /**

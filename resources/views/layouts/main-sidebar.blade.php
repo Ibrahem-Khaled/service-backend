@@ -38,14 +38,14 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{route('getLocation')}}">
+                        <a href="{{route('admin.users.index')}}" >
                             <div class="pull-left"><i class="fa fa-users"></i><span
                                     class="right-nav-text">Users</span></div>
                             <div class="clearfix"></div>
                         </a>
                     </li>
                     <li>
-                        <a href="#">
+                        <a href="{{route('admin.providers.index')}}">
                             <div class="pull-left"><i class="fa fa-briefcase"></i><span
                                     class="right-nav-text">Professionals</span></div>
                             <div class="clearfix"></div>
