@@ -52,7 +52,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#">
+                        <a  href="{{route('getGallery')}}">
                             <div class="pull-left"><i class="fa fa-picture-o"></i><span
                                     class="right-nav-text">Image Gallery</span></div>
                             <div class="clearfix"></div>

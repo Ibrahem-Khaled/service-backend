@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\CountryController;
+use App\Http\Controllers\Admin\GalleryController;
 use App\Http\Controllers\Admin\LocationController;
 use App\Http\Controllers\Admin\ProviderController;
 use App\Http\Controllers\Admin\ServiceController;
@@ -41,6 +42,11 @@ route::group(['prefix' => 'dashboard/location/'], function () {
     Route::post('store', [LocationController::class, 'store'])->name('storeLocation');
     Route::post('delete/{location}', [LocationController::class, 'delete'])->name('deleteLocation');
     Route::post('update/{location}', [LocationController::class, 'update'])->name('updateLocation');
+});
+//gallery
+route::group(['prefix' => 'dashboard/gallery/'], function () {
+    Route::get('show', [GalleryController::class, 'index'])->name('getGallery');
+    Route::post('delete/{gallery}', [GalleryController::class, 'delete'])->name('deleteGallery');
 });
 
 

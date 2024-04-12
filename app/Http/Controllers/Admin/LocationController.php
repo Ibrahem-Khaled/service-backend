@@ -13,7 +13,7 @@ class LocationController extends Controller
         $locations=Location::get();
         $countries = Country::all(); 
 
-        return view('/admin/Location', compact('locations','countries'));
+        return view('/admin/location', compact('locations','countries'));
         }
 
         public function store(Request $request)

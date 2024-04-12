@@ -10,6 +10,6 @@ class Service extends Model
     use HasFactory;
     protected $guarded=[];
     public function providers(){
-      return $this->hasMany(Provider::class,'location_id');
+      return $this->hasMany(Provider::class,'service_id');
     }
 }

@@ -7,9 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Gallery extends Model
 {
-    use HasFactory;
-    protected $guarded=[];
-    public function providers(){
-        return $this->belongsTo(provider::class,'provider_id');
-      }
+  use HasFactory;
+  
+  protected $fillable = ['image', 'provider_id'];
+  
+  public function provider()
+  {
+      return $this->belongsTo(Provider::class);
+  }
 }
