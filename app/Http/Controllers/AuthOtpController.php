@@ -83,5 +83,16 @@ class AuthOtpController extends Controller
         'user' => $provider,
     ]);
 }
+public function updatePassword(request $request){
+    $provider = Provider::whereId($request->provider_id)->first();
+    $provider->update([
+        'password' => bcrypt($request->password)
+    ]);
+    return response()->json([
+        'status' => 200,
+        'message' => 'Your Password Update Successfully! ',
+        'data' => $provider
+    ], 200);
+}
    
 }

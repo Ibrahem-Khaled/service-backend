@@ -47,6 +47,7 @@ Route::group(['prefix'=>'auth'],function($router){
     //otp
     Route::Post('/otp/generate', [AuthOtpController::class, 'otpGenerate']);
     Route::Post('/otp/login', [AuthOtpController::class, 'loginWithOtp']);
+    Route::Post('/otp/update/password', [AuthOtpController::class, 'updatePassword']);
 });
 
 
