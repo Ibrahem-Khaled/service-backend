@@ -99,10 +99,10 @@ class AuthController extends Controller
         if (!$token = Auth::guard('api')->attempt($validator->validated())) {
             return response()->json(
                 [
-                    'status' => 200,
+                    'status' => 401,
                     'error' => 'Unauthorized'
                 ],
-                200
+                401
             );
         }
         return $this->createNewToken($token);
