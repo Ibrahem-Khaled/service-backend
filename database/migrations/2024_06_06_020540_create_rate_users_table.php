@@ -4,19 +4,17 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::create('services', function (Blueprint $table) {
+        Schema::create('rate_users', function (Blueprint $table) {
             $table->id();
-            $table->string('service_name')->unique();
-            $table->string('jop_name')->unique();
-            $table->string('image')->nullable();
-            $table->boolean('active')->default(1);
+            $table->integer('user_id');
+            $table->integer('provider_id');
+            $table->integer('rate');
             $table->timestamps();
         });
     }
@@ -26,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('services');
+        Schema::dropIfExists('rate_users');
     }
 };

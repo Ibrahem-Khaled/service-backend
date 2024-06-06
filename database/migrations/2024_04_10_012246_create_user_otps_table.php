@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('user_otps', function (Blueprint $table) {
             $table->id();
             $table->string('otp');
-            $table->unsignedBigInteger('provider_id')->nullable();
-            $table->foreign('provider_id')->references('id')->on('providers')->onDelete('CASCADE');
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('CASCADE');
             $table->timestamp('expire_at')->nullable();
             $table->timestamps();
         });

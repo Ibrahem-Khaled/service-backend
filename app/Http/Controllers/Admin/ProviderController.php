@@ -3,139 +3,136 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Job;
 use App\Models\Location;
-use App\Models\Provider;
-use App\Models\Service;
+use Illuminate\Validation\Rule;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class ProviderController extends Controller
 {
-    public function index(){
-        $providers=provider::where('type',1)->get();
-        $services=Service::all();
-        $locations=Location::all();
-        return view('/admin/providers', compact('providers','services','locations'));
-        }
-        public function users(){
-            $providers=provider::where('type',0)->get();
-            return view('/admin/user', compact('providers'));
-            }
+    public function index()
+    {
+        $providers = User::where('type', 'provider')->get();
+        $services = Job::all();
+        $locations = Location::all();
+        return view('/admin/providers', compact('providers', 'services', 'locations'));
+    }
+    public function users()
+    {
+        $providers = User::where('type', 'seeker')->get();
+        return view('/admin/user', compact('providers'));
+    }
     public function store(Request $request)
     {
         $request->validate([
-            'first_name' => 'required|string',
+            'first_name' => 'nullable|string',
             'last_name' => 'nullable|string',
             'username' => 'nullable|string',
-            'phone' => 'required|string|unique:providers',
-            'password' => 'required|string',
-            'user_password' => 'nullable|string',
-            'years_experience' => 'nullable|integer',
+            'phone' => 'required|string|unique:users',
+            'password' => 'required|string|min:6',
             'location_id' => 'nullable|exists:locations,id',
-            'service_id' => 'nullable|exists:services,id',
-            'active' => 'boolean',
-            'avater' => 'nullable',
-            'type' => 'boolean',
-        ], [
-            'first_name.required' => 'The first name field is required.',
-            'phone.required' => 'The phone number field is required.',
-            'phone.unique' => 'The phone number has already been taken.',
-            'password.required' => 'The password field is required.',
-            'location_id.exists' => 'The selected location is invalid.',
-            'service_id.exists' => 'The selected service is invalid.',
-            'active.boolean' => 'The active field must be true or false.',
-            'type.boolean' => 'The type field must be true or false.',
+            'job_id' => 'nullable|exists:jobs,id',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'identity_card' => 'nullable',
+            'status' => ['required', Rule::in(['active', 'inactive'])],
+            'is_featured' => 'boolean',
+            'type' => ['required', Rule::in(['admin', 'seeker', 'provider'])],
         ]);
-        $request->merge(['type' => 1]);    
-        $provider = Provider::create($request->all());
-    
-        if ($request->has('password')) {
-            $provider->password = bcrypt($request->input('password'));
-            $provider->save();
-        }
-    
-        if ($request->hasFile('avater')) {
-            $avatar = $request->file('avater');
-            $avatarName = time() . '.' . $avatar->getClientOriginalExtension();
-            $avatar->move(public_path('avaters'), $avatarName);
-            $avatarPath = 'avaters/' . $avatarName;
-            $provider->avater = $avatarPath;
-            $provider->save();
-        }
-    
-        toastr()->success('تم حفظ البيانات بنجاح');
-        return back();
-        }
-    
 
-        public function update(Request $request, $id)
-        {
-            $request->validate([
-                'first_name' => 'string',
-                'last_name' => 'nullable|string',
-                'username' => 'nullable|string',
-                'phone' => 'required|string|unique:providers,phone,' . $id,
-                'password' => 'string',
-                'user_password' => 'nullable|string',
-                'years_experience' => 'nullable|integer',
-                'location_id' => 'nullable|exists:locations,id',
-                'service_id' => 'nullable|exists:services,id',
-                'active' => 'boolean',
-                'type' => 'boolean',
-            ], [
-                'first_name.string' => 'The first name must be a string.',
-                'last_name.string' => 'The last name must be a string.',
-                'username.string' => 'The username must be a string.',
-                'phone.required' => 'The phone number field is required.',
-                'phone.unique' => 'The phone number has already been taken.',
-                'password.string' => 'The password must be a string.',
-                'user_password.string' => 'The user password must be a string.',
-                'years_experience.integer' => 'The years of experience must be an integer.',
-                'location_id.exists' => 'The selected location is invalid.',
-                'service_id.exists' => 'The selected service is invalid.',
-                'active.boolean' => 'The active field must be true or false.',
-                'type.boolean' => 'The type field must be true or false.',
-            ]);        
-            $provider = Provider::findOrFail($id);
-            $provider->update($request->all());
-            if ($request->has('password')) {
-                $provider->password = bcrypt($request->input('password'));
-                $provider->save();
-            }
-            if ($request->hasFile('avater')) {
-                $avatar = $request->file('avater');
-                $avatarName = time() . '.' . $avatar->getClientOriginalExtension();
-                $avatar->move(public_path('avaters'), $avatarName);
-                $avatarPath = 'avaters/' . $avatarName;
-                $provider->avater = $avatarPath;
-                $provider->save();
-            }
-            toastr()->success('تم حفظ البيانات بنجاح');
-            return back();
-                }
-        
+        $userData = $request->except('password', 'image', 'identity_card');
+        $userData['password'] = bcrypt($request->password);
+
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('images'), $imageName);
+            $userData['image'] = 'images/' . $imageName;
+        }
+
+        if ($request->hasFile('identity_card')) {
+            $identityCard = $request->file('identity_card');
+            $identityCardName = time() . '_id.' . $identityCard->getClientOriginalExtension();
+            $identityCard->move(public_path('identity_cards'), $identityCardName);
+            $userData['identity_card'] = 'identity_cards/' . $identityCardName;
+        }
+
+        User::create($userData);
+
+        toastr()->success('User details saved successfully');
+        return back();
+    }
+
+
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'first_name' => 'nullable|string',
+            'last_name' => 'nullable|string',
+            'username' => 'nullable|string',
+            'phone' => 'required|string|unique:users,phone,' . $id,
+            'password' => 'nullable|string|min:6',
+            'location_id' => 'nullable|exists:locations,id',
+            'job_id' => 'nullable|exists:jobs,id',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'identity_card' => 'nullable',
+            'status' => ['required', Rule::in(['active', 'inactive'])],
+            'is_featured' => 'boolean',
+            'type' => ['required', Rule::in(['admin', 'seeker', 'provider'])],
+        ]);
+
+        $user = User::findOrFail($id);
+        $userData = $request->except('password', 'image', 'identity_card');
+
+        if ($request->filled('password')) {
+            $userData['password'] = bcrypt($request->password);
+        }
+
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('images'), $imageName);
+            $userData['image'] = 'images/' . $imageName;
+        }
+
+        if ($request->hasFile('identity_card')) {
+            $identityCard = $request->file('identity_card');
+            $identityCardName = time() . '_id.' . $identityCard->getClientOriginalExtension();
+            $identityCard->move(public_path('identity_cards'), $identityCardName);
+            $userData['identity_card'] = 'identity_cards/' . $identityCardName;
+        }
+
+        $user->update($userData);
+
+        toastr()->success('User details updated successfully');
+        return back();
+    }
+
+
 
     public function destroy($id)
     {
-        $provider = Provider::findOrFail($id);
+        $provider = User::findOrFail($id);
         $provider->delete();
 
         toastr()->success('تم حذف البيانات بنجاح');
-        return back();    
+        return back();
     }
-public function toggleProviderStatus($providerId)
-{
-    $provider = Provider::find($providerId);
+    public function toggleProviderStatus($providerId)
+    {
+        $provider = User::find($providerId);
 
-    if (!$provider) {
-        return response()->json(['message' => 'Provider not found'], 404);
+        if (!$provider) {
+            return response()->json(['message' => 'Provider not found'], 404);
+        }
+
+        $provider->status = $provider->status === 'active' ? 'inactive' : 'active';
+        $provider->save();
+
+
+        toastr()->success('تم تحديث الحالة بنجاح');
+        return back();
     }
-
-    $provider->active = !$provider->active;
-    $provider->save();
-
-
-    toastr()->success('تم تحديث الحالة بنجاح');
-    return back();  
-}
 
 }

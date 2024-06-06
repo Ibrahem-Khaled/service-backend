@@ -1,0 +1,48 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Models\Job;
+use App\Models\User;
+use Illuminate\Http\Request;
+
+class HomeController extends Controller
+{
+    public function Home()
+    {
+        try {
+            $providers = User::with('jobs')->where('type', 'provider')->where('is_featured', 1)->get();
+            $jobs = Job::all();
+
+            if ($providers->isEmpty() && $jobs->isEmpty()) {
+                return response()->json(['message' => 'No providers and jobs found'], 404);
+            }
+
+            $responseData = [
+                'providers' => $providers->isEmpty() ? null : $providers,
+                'jobs' => $jobs->isEmpty() ? null : $jobs,
+            ];
+
+            return response()->json($responseData);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Internal server error', 'error' => $e->getMessage()], 500);
+        }
+    }
+
+
+
+    public function allProviders()
+    {
+        try {
+            $providers = User::with('jobs')->where('type', 'provider')->where('status', 'active')->get();
+            if ($providers) {
+                return response()->json($providers);
+            } else {
+                return response()->json(['message' => 'No providers found'], 404);
+            }
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Internal server error', 'error' => $e->getMessage()], 500);
+        }
+    }
+}

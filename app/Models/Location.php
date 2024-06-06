@@ -7,12 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Location extends Model
 {
-    use HasFactory;
-    protected $guarded=[];
-    public function providers(){
-      return $this->hasMany(Provider::class,'location_id');
-    }
-    public function country(){
-        return $this->belongsTo(Country::class,'country_id');
-      }
+  use HasFactory;
+  protected $guarded = [];
+  public function users()
+  {
+    return $this->hasMany(User::class, 'location_id');
+  }
+  public function country()
+  {
+    return $this->belongsTo(Country::class, 'country_id');
+  }
 }

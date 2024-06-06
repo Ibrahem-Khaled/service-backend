@@ -2,7 +2,7 @@
 @section('css')
 
 @section('title')
-users
+    users
 @stop
 @endsection
 @section('page-header')
@@ -30,13 +30,13 @@ users
 @section('content')
 <!-- errors -->
 @if ($errors->any())
-<div class="alert alert-danger">
-    <ul>
-        @foreach ($errors->all() as $error)
-        <li>{{ $error }}</li>
-        @endforeach
-    </ul>
-</div>
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
 @endif
 <!-- end errors -->
 
@@ -54,100 +54,86 @@ users
                                 <th>Last Name</th>
                                 <th>Username</th>
                                 <th>Phone</th>
-                                <th>Location </th>
+                                <th>Location</th>
                                 <th>Avatar</th>
                                 <th>Status</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($providers as $provider)
-                            <tr>
-                                <td>{{$provider->first_name}}</td>
-                                <td>{{$provider->last_name}}</td>
-                                <td>{{$provider->username}}</td>
-                                <td>{{$provider->phone}}</td>
-                                @if($provider->location_id !==null)
-                                <td>{{$provider->locations->title}}</td>
-                                @else
-                                <td>
-                                </td>
-                                @endif
-                                @if($provider->avater !==null)
-                                <td>
-                                    <img src="{{ asset($provider->avater) }}" style="width:40px;height:40px" alt="">
-                                </td>
-                                @else
-                                <td>
-                                </td>
-                                @endif
-                                @if($provider->active ==0)
-                                <th>
-                                    <span class="bg-danger p-1 text-light rounded">
-                                        Inactive
-                                    </span>
-                                </th>
-                                @else
-                                <th>
-                                    <span class="bg-primary p-1 text-light rounded">
-                                        Active
-                                    </span>
-                                </th>
-                                @endif
-                                <td>
-                                    <!-- <a class="btn @if($provider->active==0) btn-primary @else btn-dark @endif btn-sm" href="{{route('admin.providers.toggle-status',$provider->id)}}">
-                                        @if($provider->active==0)
-                                        <i class="fa fa-check"></i>
-                                        @else
-                                        <i class="fa fa-times"></i>
+                            @foreach ($providers as $provider)
+                                <tr>
+                                    <td>{{ $provider->first_name }}</td>
+                                    <td>{{ $provider->last_name }}</td>
+                                    <td>{{ $provider->username }}</td>
+                                    <td>{{ $provider->phone }}</td>
+                                    <td>{{ $provider->location ? $provider->location->title : '' }}</td>
+                                    <td>
+                                        @if ($provider->iamge)
+                                            <img src="{{ asset($provider->image) }}" style="width:40px;height:40px"
+                                                alt="Avatar">
                                         @endif
-
-                                    </a> -->
-
-
-                                    <!-- Button trigger modal update -->
-
-                                    <!-- <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#edit{{$provider->id}}">
-                                        <i class="fa fa-edit"></i>
-                                    </button> -->
-
-                            
-                                    <!-- Button trigger modal delete -->
-                                    <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delete{{$provider->id}}">
-                                        <i class="fa fa-trash"></i>
-                                    </button>
-                                    <div class="modal fade" id="delete{{$provider->id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="exampleModalLabel">Delete User</h5>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                                <form action="{{route('admin.providers.destroy',$provider->id)}}" method="post">
-                                                    @csrf
-                                                    <h4 class="modal-body">
-                                                        Are you sure you want to delete this User?
-                                                    </h4>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                        <button type="submit" class="btn btn-primary">Delete</button>
+                                    </td>
+                                    <td>
+                                        @if ($provider->active == 0)
+                                            <span class="bg-danger p-1 text-light rounded">Inactive</span>
+                                        @else
+                                            <span class="bg-primary p-1 text-light rounded">Active</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <!-- Delete Button -->
+                                        <button type="button" class="btn btn-danger btn-sm" data-toggle="modal"
+                                            data-target="#delete{{ $provider->id }}">
+                                            <i class="fa fa-trash"></i>
+                                        </button>
+                                        <!-- Delete Modal -->
+                                        <div class="modal fade" id="delete{{ $provider->id }}" tabindex="-1"
+                                            aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLabel">Delete User</h5>
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                            aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
                                                     </div>
-                                                </form>
+                                                    <form action="{{ route('admin.providers.destroy', $provider->id) }}"
+                                                        method="post">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <div class="modal-body">
+                                                            <h4>Are you sure you want to delete this User?</h4>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary"
+                                                                data-dismiss="modal">Close</button>
+                                                            <button type="submit"
+                                                                class="btn btn-primary">Delete</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <!-- Button trigger modal show -->
-                                    <!-- <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#show">
-                          <i class="fa fa-eye"></i>
-                          </button>
-                 -->
-                                </td>
-                            </tr>
+                                    </td>
+                                </tr>
                             @endforeach
-                            </tfoot>
+                        </tbody>
                     </table>
+
+                    <!-- Additional Inputs Below Table -->
+                    <form action="{{ route('admin.providers.store') }}" method="post" enctype="multipart/form-data">
+                        @csrf
+                        <!-- Add your additional inputs here -->
+                        <input type="text" name="additional_field1" class="form-control"
+                            placeholder="Additional Field 1">
+                        <input type="text" name="additional_field2" class="form-control"
+                            placeholder="Additional Field 2">
+                        <!-- Add more inputs as needed -->
+                        <button type="submit" class="btn btn-primary mt-3">Submit</button>
+                    </form>
+
                 </div>
             </div>
         </div>
