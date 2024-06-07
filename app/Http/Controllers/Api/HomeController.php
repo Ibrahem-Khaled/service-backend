@@ -45,4 +45,17 @@ class HomeController extends Controller
             return response()->json(['message' => 'Internal server error', 'error' => $e->getMessage()], 500);
         }
     }
+    public function allServices()
+    {
+        try {
+            $services = Job::all();
+            if ($services) {
+                return response()->json($services);
+            } else {
+                return response()->json(['message' => 'No services found'], 404);
+            }
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Internal server error', 'error' => $e->getMessage()], 500);
+        }
+    }
 }

@@ -45,6 +45,13 @@
                         </a>
                     </li>
                     <li>
+                        <a href="{{route('getSubCategory')}}" >
+                            <div class="pull-left"><i class="fa fa-users"></i><span
+                                    class="right-nav-text">subCategories</span></div>
+                            <div class="clearfix"></div>
+                        </a>
+                    </li>
+                    <li>
                         <a href="{{route('admin.providers.index')}}">
                             <div class="pull-left"><i class="fa fa-briefcase"></i><span
                                     class="right-nav-text">Professionals</span></div>

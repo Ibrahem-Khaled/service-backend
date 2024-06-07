@@ -129,11 +129,6 @@
                                                                 class="form-control"
                                                                 value="{{ $service->service_name }}">
                                                             </br>
-                                                            <label style="font-size: 15px; font-weight: bold;"> Job
-                                                                Name </label>
-                                                            <input type="text" name="jop_name" class="form-control"
-                                                                value="{{ $service->jop_name }}">
-                                                            </br>
                                                             <label style="font-size: 15px; font-weight: bold;"> Service
                                                                 Image </label>
                                                             <input type="file" name="image" class="form-control"

@@ -18,4 +18,9 @@ class Job extends Model
     {
         return $this->hasMany(User::class, 'job_id', 'id');
     }
+
+    public function subCategories()
+    {
+        return $this->hasMany(SubCategory::class, 'job_id', 'id');
+    }
 }

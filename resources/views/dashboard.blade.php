@@ -74,6 +74,16 @@ dashboard
             </div>
         </div>
     </a>
+    <a href="{{route('getSubCategory')}}" class="col-md-4 mb-4">
+        <div class="card text-center bg-light">
+            <div class="card-body">
+                <h5 class="card-title text-primary"><i class="fa fa-briefcase"></i>SubCategory </h5>
+                <p class="card-text text-dark">
+                    We provide you with a unique opportunity to have full control over all Sub-Category easily and smoothly
+                </p>
+            </div>
+        </div>
+    </a>
     <a href="{{route('getGallery')}}" class="col-md-4 mb-4">
         <div class="card text-center bg-light">
             <div class="card-body">

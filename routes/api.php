@@ -17,6 +17,7 @@ Route::group(['middleware' => ['jwt.auth']], function () {
 
 Route::get('home', [HomeController::class, 'Home']);
 Route::get('allProviders', [HomeController::class, 'allProviders']);
+Route::get('allServices', [HomeController::class, 'allServices']);
 
 
 
