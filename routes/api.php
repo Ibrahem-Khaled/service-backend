@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\HomeController;
+use App\Http\Controllers\Api\ServicesController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -18,6 +19,9 @@ Route::group(['middleware' => ['jwt.auth']], function () {
 Route::get('home', [HomeController::class, 'Home']);
 Route::get('allProviders', [HomeController::class, 'allProviders']);
 Route::get('allServices', [HomeController::class, 'allServices']);
+Route::get('subCategories/{serviceId}', [ServicesController::class, 'index']);
+
+
 
 
 

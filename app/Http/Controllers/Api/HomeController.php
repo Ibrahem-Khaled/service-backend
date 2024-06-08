@@ -49,7 +49,13 @@ class HomeController extends Controller
     {
         try {
             $services = Job::all();
-            if ($services) {
+
+            if ($services->isNotEmpty()) {
+                $services = $services->map(function ($service) {
+                    $service->has_subcategory = $service->subCategories()->exists();
+                    return $service;
+                });
+
                 return response()->json($services);
             } else {
                 return response()->json(['message' => 'No services found'], 404);
@@ -58,4 +64,5 @@ class HomeController extends Controller
             return response()->json(['message' => 'Internal server error', 'error' => $e->getMessage()], 500);
         }
     }
+
 }

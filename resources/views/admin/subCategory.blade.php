@@ -60,7 +60,7 @@
                         @csrf
                         <div class="form-group">
                             <label for="name">job</label>
-                            <select name="job_id" class="form-control">
+                            <select name="job_id" class="form-control" required>
                                 @foreach ($services as $job)
                                     <option value="{{ $job->id }}">{{ $job->name }}</option>
                                 @endforeach
@@ -106,7 +106,7 @@
                                 @foreach ($subCategories as $subCategory)
                                     <tr>
                                         <td>{{ $subCategory->name }}</td>
-                                        <td>{{ $subCategory->job->name }}</td>
+                                        <td>{{ $subCategory?->job?->name }}</td>
                                         <td>
                                             @if ($subCategory->image)
                                                 <img src="{{ asset('public/storage/' . $subCategory->image) }}"
