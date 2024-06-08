@@ -13,11 +13,17 @@ class HomeController extends Controller
     {
         try {
             $providers = User::with('jobs')->where('type', 'provider')->where('is_featured', 1)->get();
-            $jobs = Job::all();
+            $jobs = Job::with('subCategories')->get();
 
             if ($providers->isEmpty() && $jobs->isEmpty()) {
                 return response()->json(['message' => 'No providers and jobs found'], 404);
             }
+
+            // Adding has_subcategory flag to jobs
+            $jobs = $jobs->map(function ($job) {
+                $job->has_subcategory = $job->subCategories ? true : false;
+                return $job;
+            });
 
             $responseData = [
                 'providers' => $providers->isEmpty() ? null : $providers,
@@ -29,6 +35,7 @@ class HomeController extends Controller
             return response()->json(['message' => 'Internal server error', 'error' => $e->getMessage()], 500);
         }
     }
+
 
 
 
