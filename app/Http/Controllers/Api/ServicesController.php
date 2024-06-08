@@ -21,4 +21,16 @@ class ServicesController extends Controller
         }
     }
 
+    public function allProvidersFromService($serviceId)
+    {
+        try {
+            // استخدم findOrFail للعثور على الخدمة ومعالجة الحالة إذا لم يتم العثور عليها
+            $job = Job::with('users')->findOrFail($serviceId);
+            return response()->json($job);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['message' => 'Service not found'], 404);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Internal server error', 'error' => $e->getMessage()], 500);
+        }
+    }
 }

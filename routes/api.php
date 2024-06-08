@@ -20,6 +20,7 @@ Route::get('home', [HomeController::class, 'Home']);
 Route::get('allProviders', [HomeController::class, 'allProviders']);
 Route::get('allServices', [HomeController::class, 'allServices']);
 Route::get('subCategories/{serviceId}', [ServicesController::class, 'index']);
+Route::get('allProvidersFromService/{serviceId}', [ServicesController::class, 'allProvidersFromService']);
 
 
 
