@@ -87,7 +87,7 @@
                                 <tr>
                                     <td>{{ $service->name }}</td>
                                     <td>
-                                        <img src="{{ asset('storage/' . $service->image) }}"
+                                        <img src="{{ asset( $service->image) }}"
                                             style="width:40px;height:40px" alt="Service Image">
                                     </td>
 

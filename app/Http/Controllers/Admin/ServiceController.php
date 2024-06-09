@@ -3,22 +3,18 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Country;
 use App\Models\Job;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Storage;
 
 class ServiceController extends Controller
 {
     public function index()
     {
-        $services = Job::query()->get();
-        if ($services === null) {
-            throw new \RuntimeException('Failed to retrieve services');
-        }
-        return view('/admin/job', compact('services'));
+        $services = Job::all();
+        return view('admin.job', compact('services'));
     }
-
 
     public function store(Request $request)
     {
@@ -27,9 +23,16 @@ class ServiceController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        $data['image'] = $request->file('image')->store('services', 'public');
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            $image->storeAs('public/images', $imageName);
+            $data['image'] = 'storage/images/' . $imageName;
+        }
 
-        if (Job::create($data)) {
+        $job = Job::create($data);
+
+        if ($job) {
             toastr()->success('Service saved successfully');
         } else {
             toastr()->error('Failed to save the service');
@@ -43,17 +46,17 @@ class ServiceController extends Controller
         $service = Job::findOrFail($sr);
 
         $validatedData = $request->validate([
-            'name' => ['required', Rule::unique('services')->ignore($sr), 'max:100'],
+            'name' => ['required', Rule::unique('jobs')->ignore($sr), 'max:100'],
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        $service->fill([
-            'name' => $validatedData['name'],
-            'jop_name' => $validatedData['jop_name'],
-        ]);
+        $service->name = $validatedData['name'];
 
         if ($request->hasFile('image')) {
-            $service->image = $request->file('image')->store('services', 'public');
+            $image = $request->file('image');
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            $image->storeAs('public/images', $imageName);
+            $service->image = 'storage/images/' . $imageName;
         }
 
         if ($service->save()) {
@@ -65,12 +68,16 @@ class ServiceController extends Controller
         return back();
     }
 
-
     public function delete(Request $request, int $sr)
     {
-        Job::destroy($sr);
-        toastr()->success('تم حذف البيانات ');
+        $service = Job::findOrFail($sr);
+
+        if ($service->image) {
+            Storage::delete('public/' . $service->image);
+        }
+
+        $service->delete();
+        toastr()->success('Data deleted successfully');
         return back();
     }
-
 }

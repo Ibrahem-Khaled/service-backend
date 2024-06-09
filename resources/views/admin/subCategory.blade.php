@@ -109,8 +109,8 @@
                                         <td>{{ $subCategory?->job?->name }}</td>
                                         <td>
                                             @if ($subCategory->image)
-                                                <img src="{{ asset('public/storage/' . $subCategory->image) }}"
-                                                    alt="Sub Category Image" width="100">
+                                                <img src="{{ asset($subCategory->image) }}" alt="Sub Category Image"
+                                                    width="100">
                                             @else
                                                 No Image
                                             @endif
