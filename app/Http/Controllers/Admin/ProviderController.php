@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
@@ -8,6 +7,7 @@ use App\Models\Location;
 use Illuminate\Validation\Rule;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 
 class ProviderController extends Controller
 {
@@ -18,11 +18,13 @@ class ProviderController extends Controller
         $locations = Location::all();
         return view('/admin/providers', compact('providers', 'services', 'locations'));
     }
+
     public function users()
     {
         $providers = User::where('type', 'seeker')->get();
         return view('/admin/user', compact('providers'));
     }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -44,17 +46,11 @@ class ProviderController extends Controller
         $userData['password'] = bcrypt($request->password);
 
         if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $imageName = time() . '.' . $image->getClientOriginalExtension();
-            $image->move(public_path('images'), $imageName);
-            $userData['image'] = 'images/' . $imageName;
+            $userData['image'] = $this->uploadImage($request->file('image'), 'images');
         }
 
         if ($request->hasFile('identity_card')) {
-            $identityCard = $request->file('identity_card');
-            $identityCardName = time() . '_id.' . $identityCard->getClientOriginalExtension();
-            $identityCard->move(public_path('identity_cards'), $identityCardName);
-            $userData['identity_card'] = 'identity_cards/' . $identityCardName;
+            $userData['identity_card'] = $this->uploadImage($request->file('identity_card'), 'identity_cards');
         }
 
         User::create($userData);
@@ -62,8 +58,6 @@ class ProviderController extends Controller
         toastr()->success('User details saved successfully');
         return back();
     }
-
-
 
     public function update(Request $request, $id)
     {
@@ -90,17 +84,17 @@ class ProviderController extends Controller
         }
 
         if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $imageName = time() . '.' . $image->getClientOriginalExtension();
-            $image->move(public_path('images'), $imageName);
-            $userData['image'] = 'images/' . $imageName;
+            $userData['image'] = $this->uploadImage($request->file('image'), 'images');
+            if ($user->image) {
+                $this->deleteImage($user->image);
+            }
         }
 
         if ($request->hasFile('identity_card')) {
-            $identityCard = $request->file('identity_card');
-            $identityCardName = time() . '_id.' . $identityCard->getClientOriginalExtension();
-            $identityCard->move(public_path('identity_cards'), $identityCardName);
-            $userData['identity_card'] = 'identity_cards/' . $identityCardName;
+            $userData['identity_card'] = $this->uploadImage($request->file('identity_card'), 'identity_cards');
+            if ($user->identity_card) {
+                $this->deleteImage($user->identity_card);
+            }
         }
 
         $user->update($userData);
@@ -109,16 +103,24 @@ class ProviderController extends Controller
         return back();
     }
 
-
-
     public function destroy($id)
     {
         $provider = User::findOrFail($id);
+
+        if ($provider->image) {
+            $this->deleteImage($provider->image);
+        }
+
+        if ($provider->identity_card) {
+            $this->deleteImage($provider->identity_card);
+        }
+
         $provider->delete();
 
         toastr()->success('تم حذف البيانات بنجاح');
         return back();
     }
+
     public function toggleProviderStatus($providerId)
     {
         $provider = User::find($providerId);
@@ -130,9 +132,22 @@ class ProviderController extends Controller
         $provider->status = $provider->status === 'active' ? 'inactive' : 'active';
         $provider->save();
 
-
         toastr()->success('تم تحديث الحالة بنجاح');
         return back();
     }
 
+    private function uploadImage($file, $folder)
+    {
+        $fileName = time() . '.' . $file->getClientOriginalExtension();
+        $file->move(public_path($folder), $fileName);
+        return $folder . '/' . $fileName;
+    }
+
+    private function deleteImage($filePath)
+    {
+        $fullPath = public_path($filePath);
+        if (File::exists($fullPath)) {
+            File::delete($fullPath);
+        }
+    }
 }

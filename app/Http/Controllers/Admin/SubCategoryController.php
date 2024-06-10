@@ -1,12 +1,11 @@
 <?php
-
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Job;
 use App\Models\SubCategory;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 
 class SubCategoryController extends Controller
 {
@@ -55,8 +54,9 @@ class SubCategoryController extends Controller
     {
         $image = $request->file('image');
         $imageName = time() . '.' . $image->getClientOriginalExtension();
-        $image->storeAs('public/images', $imageName);
-        return 'storage/images/' . $imageName;
+        $destinationPath = public_path('images');
+        $image->move($destinationPath, $imageName);
+        return 'images/' . $imageName;
     }
 
     public function destroy($subcategoryId)
@@ -64,11 +64,13 @@ class SubCategoryController extends Controller
         $subcategory = SubCategory::findOrFail($subcategoryId);
 
         if ($subcategory->image) {
-            Storage::delete('public/' . $subcategory->image);
+            $imagePath = public_path($subcategory->image);
+            if (File::exists($imagePath)) {
+                File::delete($imagePath);
+            }
         }
 
         $subcategory->delete();
-
         return redirect()->back()->with('success', 'Sub Category deleted successfully.');
     }
 }

@@ -1,12 +1,11 @@
 <?php
-
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Job;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 
 class ServiceController extends Controller
 {
@@ -24,10 +23,7 @@ class ServiceController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $imageName = time() . '.' . $image->getClientOriginalExtension();
-            $image->storeAs('public/images', $imageName);
-            $data['image'] = 'storage/images/' . $imageName;
+            $data['image'] = $this->uploadImage($request);
         }
 
         $job = Job::create($data);
@@ -53,10 +49,11 @@ class ServiceController extends Controller
         $service->name = $validatedData['name'];
 
         if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $imageName = time() . '.' . $image->getClientOriginalExtension();
-            $image->storeAs('public/images', $imageName);
-            $service->image = 'storage/images/' . $imageName;
+            $validatedData['image'] = $this->uploadImage($request);
+            if ($service->image) {
+                $this->deleteImage($service->image);
+            }
+            $service->image = $validatedData['image'];
         }
 
         if ($service->save()) {
@@ -73,11 +70,28 @@ class ServiceController extends Controller
         $service = Job::findOrFail($sr);
 
         if ($service->image) {
-            Storage::delete('public/' . $service->image);
+            $this->deleteImage($service->image);
         }
 
         $service->delete();
         toastr()->success('Data deleted successfully');
         return back();
+    }
+
+    private function uploadImage($request)
+    {
+        $image = $request->file('image');
+        $imageName = time() . '.' . $image->getClientOriginalExtension();
+        $destinationPath = public_path('images');
+        $image->move($destinationPath, $imageName);
+        return 'images/' . $imageName;
+    }
+
+    private function deleteImage($imagePath)
+    {
+        $fullPath = public_path($imagePath);
+        if (File::exists($fullPath)) {
+            File::delete($fullPath);
+        }
     }
 }
