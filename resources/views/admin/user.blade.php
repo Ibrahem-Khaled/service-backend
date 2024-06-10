@@ -102,7 +102,6 @@
                                                     <form action="{{ route('admin.providers.destroy', $provider->id) }}"
                                                         method="post">
                                                         @csrf
-                                                        @method('DELETE')
                                                         <div class="modal-body">
                                                             <h4>Are you sure you want to delete this User?</h4>
                                                         </div>

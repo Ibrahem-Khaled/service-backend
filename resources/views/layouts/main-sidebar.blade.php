@@ -54,7 +54,7 @@
                     <li>
                         <a href="{{route('admin.providers.index')}}">
                             <div class="pull-left"><i class="fa fa-briefcase"></i><span
-                                    class="right-nav-text">Professionals</span></div>
+                                    class="right-nav-text">Providers</span></div>
                             <div class="clearfix"></div>
                         </a>
                     </li>

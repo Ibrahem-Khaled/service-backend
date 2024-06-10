@@ -1,6 +1,5 @@
 @extends('layouts.master')
 @section('css')
-
 @section('title')
     Providers
 @stop
@@ -188,8 +187,167 @@
                                         </button>
                                     </td>
                                 </tr>
+
+                                <!-- Edit Modal -->
+                                <div class="modal fade" id="edit{{ $provider->id }}" tabindex="-1" role="dialog"
+                                    aria-labelledby="editLabel{{ $provider->id }}" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="editLabel{{ $provider->id }}">Edit
+                                                    Provider</h5>
+                                                <button type="button" class="close" data-dismiss="modal"
+                                                    aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form action="{{ route('updateProviders', $provider->id) }}"
+                                                    method="post" enctype="multipart/form-data">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <div class="form-group">
+                                                        <input type="text" name="first_name" class="form-control"
+                                                            value="{{ $provider->first_name }}"
+                                                            placeholder="First Name">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <input type="text" name="last_name" class="form-control"
+                                                            value="{{ $provider->last_name }}"
+                                                            placeholder="Last Name">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <input type="text" name="username" class="form-control"
+                                                            value="{{ $provider->username }}" placeholder="Username">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <input type="text" name="phone" class="form-control"
+                                                            value="{{ $provider->phone }}" placeholder="Phone">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <input type="password" name="password" class="form-control"
+                                                            placeholder="Password (leave blank if not changing)">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <input type="text" name="years_experience"
+                                                            class="form-control"
+                                                            value="{{ $provider->years_experience }}"
+                                                            placeholder="Years of Experience">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label style="font-size: 13px; font-weight: bold;"
+                                                            class="ml-3">Service</label>
+                                                        <select name="job_id" class="form-control">
+                                                            @foreach ($services as $service)
+                                                                <option value="{{ $service->id }}"
+                                                                    {{ $provider->job_id == $service->id ? 'selected' : '' }}>
+                                                                    {{ $service->name }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label style="font-size: 13px; font-weight: bold;"
+                                                            class="ml-3">Location</label>
+                                                        <select name="location_id" class="form-control">
+                                                            @foreach ($locations as $location)
+                                                                <option value="{{ $location->id }}"
+                                                                    {{ $provider->location_id == $location->id ? 'selected' : '' }}>
+                                                                    {{ $location->title }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label style="font-size: 13px; font-weight: bold;"
+                                                            class="ml-3">image (Optional)</label>
+                                                        <input type="file" name="image" class="form-control">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label style="font-size: 13px; font-weight: bold;"
+                                                            class="ml-3">identity_card (Optional)</label>
+                                                        <input type="file" name="identity_card"
+                                                            class="form-control">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label style="font-size: 13px; font-weight: bold;"
+                                                            class="ml-3">Status</label>
+                                                        <select name="status" class="form-control">
+                                                            <option value="active"
+                                                                {{ $provider->status == 'active' ? 'selected' : '' }}>
+                                                                Active</option>
+                                                            <option value="inactive"
+                                                                {{ $provider->status == 'inactive' ? 'selected' : '' }}>
+                                                                Inactive</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label style="font-size: 13px; font-weight: bold;"
+                                                            class="ml-3">Is Featured</label>
+                                                        <select name="is_featured" class="form-control">
+                                                            <option value="0"
+                                                                {{ $provider->is_featured == 0 ? 'selected' : '' }}>No
+                                                            </option>
+                                                            <option value="1"
+                                                                {{ $provider->is_featured == 1 ? 'selected' : '' }}>Yes
+                                                            </option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label style="font-size: 13px; font-weight: bold;"
+                                                            class="ml-3">Type</label>
+                                                        <select name="type" class="form-control">
+                                                            <option value="admin"
+                                                                {{ $provider->type == 'admin' ? 'selected' : '' }}>
+                                                                Admin</option>
+                                                            <option value="seeker"
+                                                                {{ $provider->type == 'seeker' ? 'selected' : '' }}>
+                                                                Seeker</option>
+                                                            <option value="provider"
+                                                                {{ $provider->type == 'provider' ? 'selected' : '' }}>
+                                                                Provider</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary"
+                                                            data-dismiss="modal">Close</button>
+                                                        <button type="submit" class="btn btn-primary">Update</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Delete Modal -->
+                                <div class="modal fade" id="delete{{ $provider->id }}" tabindex="-1"
+                                    role="dialog" aria-labelledby="deleteLabel{{ $provider->id }}"
+                                    aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="deleteLabel{{ $provider->id }}">Delete
+                                                    Provider</h5>
+                                                <button type="button" class="close" data-dismiss="modal"
+                                                    aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form action="{{ route('admin.providers.destroy', $provider->id) }}"
+                                                    method="post">
+                                                    @csrf
+                                                    <p>Are you sure you want to delete this provider?</p>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary"
+                                                            data-dismiss="modal">Close</button>
+                                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             @endforeach
-                            </tfoot>
+                        </tbody>
                     </table>
                 </div>
             </div>
@@ -199,5 +357,4 @@
 <!-- row closed -->
 @endsection
 @section('js')
-
 @endsection
