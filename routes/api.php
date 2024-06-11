@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\HomeController;
+use App\Http\Controllers\Api\LocationsController;
 use App\Http\Controllers\Api\ServicesController;
+use App\Http\Controllers\Api\SubCategoryController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -23,7 +25,8 @@ Route::get('subCategories/{serviceId}', [ServicesController::class, 'index']);
 Route::get('allProvidersFromService/{serviceId}', [ServicesController::class, 'allProvidersFromService']);
 
 
+Route::get('/show', [LocationsController::class, 'country']);
+Route::get('/locations/show', [LocationsController::class, 'location']);
+Route::get('/locations/show/{location}', [LocationsController::class, 'locationDetails']);
 
-
-
-
+Route::get('/subCategory/{subCategoryId}', [SubCategoryController::class, 'index']);

@@ -74,9 +74,17 @@
                     </div>
                     <div class="form-group">
                         <label style="font-size: 13px; font-weight: bold;" class="ml-3">Service</label>
-                        <select name="job_id" class="form-control">
+                        <select name="job_id" id="job_id" class="form-control">
                             @foreach ($services as $service)
                                 <option value="{{ $service->id }}">{{ $service->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label style="font-size: 13px; font-weight: bold;" class="ml-3">SubCategory</label>
+                        <select name="sub_category_id" id="sub_category_id" class="form-control">
+                            @foreach ($subCategories as $item)
+                                <option value="{{ $item->id }}">{{ $item->title }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -170,7 +178,7 @@
                                             class="bg-{{ $provider->status == 'active' ? 'primary' : 'danger' }} p-1 text-light rounded">{{ $provider->status == 'active' ? 'Active' : 'Inactive' }}</span>
                                     </td>
                                     <td><span
-                                            class="bg-{{ $provider->is_featured == 1 ? 'warning' : 'danger' }} p-1 text-light rounded">{{ $provider->status == 1 ? 'futer' : 'no futer' }}</span>
+                                            class="bg-{{ $provider->is_featured == 1 ? 'warning' : 'danger' }} p-1 text-light rounded">{{ $provider->is_featured == 1 ? 'futer' : 'no futer' }}</span>
                                     </td>
                                     <td>
                                         <a class="btn {{ $provider->active ? 'btn-primary' : 'btn-dark' }} btn-sm"
@@ -237,11 +245,24 @@
                                                     <div class="form-group">
                                                         <label style="font-size: 13px; font-weight: bold;"
                                                             class="ml-3">Service</label>
-                                                        <select name="job_id" class="form-control">
+                                                        <select name="job_id" id="edit_job_id{{ $provider->id }}"
+                                                            class="form-control">
                                                             @foreach ($services as $service)
                                                                 <option value="{{ $service->id }}"
                                                                     {{ $provider->job_id == $service->id ? 'selected' : '' }}>
                                                                     {{ $service->name }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label style="font-size: 13px; font-weight: bold;"
+                                                            class="ml-3">SubCategory</label>
+                                                        <select name="sub_category_id"
+                                                            id="edit_sub_category_id{{ $provider->id }}"
+                                                            class="form-control">
+                                                            @foreach ($subCategories as $item)
+                                                                <option value="{{ $item->id }}">
+                                                                    {{ $item->title }}</option>
                                                             @endforeach
                                                         </select>
                                                     </div>
@@ -357,4 +378,45 @@
 <!-- row closed -->
 @endsection
 @section('js')
+<script>
+    $(document).ready(function() {
+        // Function to fetch subcategories based on the selected category
+        function fetchSubCategories(categoryId, subCategorySelectId) {
+            $.ajax({
+                url: '/api/subcategories/' + categoryId, // Adjust the URL based on your API endpoint
+                method: 'GET',
+                success: function(data) {
+                    var options = '<option value="">Select SubCategory</option>';
+                    $.each(data, function(index, subCategory) {
+                        options += '<option value="' + subCategory.id + '">' + subCategory
+                            .name + '</option>';
+                    });
+                    $(subCategorySelectId).html(options);
+                }
+            });
+        }
+
+        // Event listener for the service select in the add modal
+        $('#job_id').change(function() {
+            var categoryId = $(this).val();
+            fetchSubCategories(categoryId, '#sub_category_id');
+        });
+
+        // Event listener for the service select in the edit modals
+        @foreach ($providers as $provider)
+            $('#edit_job_id{{ $provider->id }}').change(function() {
+                var categoryId = $(this).val();
+                fetchSubCategories(categoryId, '#edit_sub_category_id{{ $provider->id }}');
+            });
+
+            // Fetch initial subcategories for the edit modal
+            var initialCategoryId = $('#edit_job_id{{ $provider->id }}').val();
+            fetchSubCategories(initialCategoryId, '#edit_sub_category_id{{ $provider->id }}');
+        @endforeach
+
+        // Initialize subcategories for the add modal
+        var initialAddCategoryId = $('#job_id').val();
+        fetchSubCategories(initialAddCategoryId, '#sub_category_id');
+    });
+</script>
 @endsection

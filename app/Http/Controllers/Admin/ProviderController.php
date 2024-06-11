@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Job;
 use App\Models\Location;
+use App\Models\SubCategory;
 use Illuminate\Validation\Rule;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -16,7 +17,8 @@ class ProviderController extends Controller
         $providers = User::where('type', 'provider')->get();
         $services = Job::all();
         $locations = Location::all();
-        return view('/admin/providers', compact('providers', 'services', 'locations'));
+        $subCategories = SubCategory::all();
+        return view('/admin/providers', compact('providers', 'services', 'locations', 'subCategories'));
     }
 
     public function users()
@@ -38,7 +40,6 @@ class ProviderController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'identity_card' => 'nullable',
             'status' => ['required', Rule::in(['active', 'inactive'])],
-            'is_featured' => 'boolean',
             'type' => ['required', Rule::in(['admin', 'seeker', 'provider'])],
         ]);
 
@@ -72,7 +73,6 @@ class ProviderController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'identity_card' => 'nullable',
             'status' => ['required', Rule::in(['active', 'inactive'])],
-            'is_featured' => 'boolean',
             'type' => ['required', Rule::in(['admin', 'seeker', 'provider'])],
         ]);
 

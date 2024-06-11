@@ -25,8 +25,10 @@ class User extends Authenticatable implements JWTSubject
         'coutry_id',
         'location_id',
         'status',
-        'is_future',
+        'is_featured',
         'password',
+        'sub_categories_id',
+        'years_experience',
     ];
 
     /**
@@ -65,5 +67,10 @@ class User extends Authenticatable implements JWTSubject
     public function Jobs()
     {
         return $this->belongsTo(Job::class, 'job_id', 'id');
+    }
+
+    public function SubCategories()
+    {
+        return $this->belongsTo(SubCategory::class, 'sub_categories_id', 'id');
     }
 }

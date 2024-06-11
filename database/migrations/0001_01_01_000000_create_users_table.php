@@ -26,6 +26,8 @@ return new class extends Migration {
             $table->enum('status', ['active', 'inactive'])->default('active');
             $table->boolean('is_featured')->default(0);
             $table->bigInteger('job_id')->nullable();
+            $table->bigInteger('sub_categories_id')->nullable();
+            $table->bigInteger('years_experience')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

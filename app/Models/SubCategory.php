@@ -15,4 +15,9 @@ class SubCategory extends Model
     {
         return $this->belongsTo(Job::class, 'job_id', 'id');
     }
+
+    public function providers()
+    {
+        return $this->hasMany(User::class, 'sub_categories_id', 'id');
+    }
 }
