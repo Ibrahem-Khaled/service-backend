@@ -72,4 +72,18 @@ class HomeController extends Controller
         }
     }
 
+    public function providerDetails($id)
+    {
+        try {
+            $provider = User::with('Jobs', 'SubCategories', 'gallery', 'reviews', 'providerReviews')->find($id);
+            if ($provider) {
+                return response()->json($provider);
+            } else {
+                return response()->json(['message' => 'Provider not found'], 404);
+            }
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Internal server error', 'error' => $e->getMessage()], 500);
+        }
+    }
+
 }

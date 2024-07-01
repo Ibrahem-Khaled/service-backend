@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 
 class AuthController extends Controller
 {
@@ -115,8 +116,10 @@ class AuthController extends Controller
         }
 
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('images', 'public');
-            $user->image = $imagePath;
+            $userData['image'] = $this->uploadImage($request->file('image'), 'images');
+            if ($user->image) {
+                $this->deleteImage($user->image);
+            }
         }
 
         if ($request->hasFile('identity_card')) {
@@ -136,5 +139,20 @@ class AuthController extends Controller
         $user->save();
 
         return response()->json(compact('user'));
+    }
+
+    private function uploadImage($file, $folder)
+    {
+        $fileName = time() . '.' . $file->getClientOriginalExtension();
+        $file->move(public_path($folder), $fileName);
+        return $folder . '/' . $fileName;
+    }
+
+    private function deleteImage($filePath)
+    {
+        $fullPath = public_path($filePath);
+        if (File::exists($fullPath)) {
+            File::delete($fullPath);
+        }
     }
 }

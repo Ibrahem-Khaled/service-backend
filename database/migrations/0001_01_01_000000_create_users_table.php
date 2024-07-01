@@ -28,6 +28,8 @@ return new class extends Migration {
             $table->bigInteger('job_id')->nullable();
             $table->bigInteger('sub_categories_id')->nullable();
             $table->bigInteger('years_experience')->nullable();
+            $table->string('description')->nullable();
+            $table->text('avable_time')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

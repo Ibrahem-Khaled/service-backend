@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\LocationController;
 use App\Http\Controllers\Admin\ProviderController;
 use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Admin\SubCategoryController;
+use App\Http\Controllers\Api\ReportsController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -45,7 +46,8 @@ route::group(['prefix' => 'dashboard/location/'], function () {
 //gallery
 route::group(['prefix' => 'dashboard/gallery/'], function () {
     Route::get('show', [GalleryController::class, 'index'])->name('getGallery');
-    Route::post('delete/{gallery}', [GalleryController::class, 'delete'])->name('deleteGallery');
+    Route::get('create', [GalleryController::class, 'store'])->name('createGallery');
+    Route::delete('delete/{gallery}', [GalleryController::class, 'delete'])->name('deleteGallery');
 });
 
 route::group(['prefix' => 'dashboard/subcategory/'], function () {
@@ -53,6 +55,8 @@ route::group(['prefix' => 'dashboard/subcategory/'], function () {
     Route::post('create', [SubCategoryController::class, 'store'])->name('sub_categories.store');
     Route::delete('delete/{subcategoryId}', [SubCategoryController::class, 'destroy'])->name('sub_categories.destroy');
 });
+
+Route::get('providers/reports', [ReportsController::class, 'index'])->name('userReports');
 
 
 Route::prefix('admin')->group(function () {

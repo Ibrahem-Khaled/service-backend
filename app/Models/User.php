@@ -30,6 +30,8 @@ class User extends Authenticatable implements JWTSubject
         'sub_categories_id',
         'years_experience',
         'job_id',
+        'description',
+        'avable_time',
     ];
 
     /**
@@ -73,5 +75,24 @@ class User extends Authenticatable implements JWTSubject
     public function SubCategories()
     {
         return $this->belongsTo(SubCategory::class, 'sub_categories_id', 'id');
+    }
+
+    public function gallery()
+    {
+        return $this->hasMany(Gallery::class, 'user_id', 'id');
+    }
+    public function providerReviews()
+    {
+        return $this->hasMany(Reviews::class, 'provider_id', 'id');
+    }
+
+    public function userReviews()
+    {
+        return $this->hasMany(Reviews::class, 'user_id', 'id');
+    }
+
+    public function reports()
+    {
+        return $this->hasMany(ReportUser::class, 'user_id', 'id');
     }
 }

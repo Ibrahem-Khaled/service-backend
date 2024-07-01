@@ -66,6 +66,12 @@
                         <input type="text" name="phone" class="form-control" placeholder="Phone">
                     </div>
                     <div class="form-group">
+                        <input type="text" name="description" class="form-control" placeholder="description">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="avable_time" class="form-control" placeholder="avable_time">
+                    </div>
+                    <div class="form-group">
                         <input type="password" name="password" class="form-control" placeholder="Password">
                     </div>
                     <div class="form-group">
@@ -83,8 +89,8 @@
                     <div class="form-group">
                         <label style="font-size: 13px; font-weight: bold;" class="ml-3">SubCategory</label>
                         <select name="sub_category_id" id="sub_category_id" class="form-control">
-                            @foreach ($subCategories as $item)
-                                <option value="{{ $item->id }}">{{ $item->title }}</option>
+                            @foreach ($subCategories as $subCategory)
+                                <option value="{{ $subCategory->id }}">{{ $subCategory->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -153,6 +159,7 @@
                                 <th>Years of Experience</th>
                                 <th>Location </th>
                                 <th>Service </th>
+                                <th>sub category</th>
                                 <th>Avatar</th>
                                 <th>identity_card</th>
                                 <th>Status</th>
@@ -170,6 +177,7 @@
                                     <td>{{ $provider->years_experience }}</td>
                                     <td>{{ optional($provider->location)->title }}</td>
                                     <td>{{ optional($provider->Jobs)->name }}</td>
+                                    <td>{{ optional($provider->SubCategories)->name }}</td>
                                     <td><img src="{{ asset($provider->image) }}" style="width:40px;height:40px"
                                             alt=""></td>
                                     <td><img src="{{ asset($provider->identity_card) }}"
@@ -233,6 +241,16 @@
                                                             value="{{ $provider->phone }}" placeholder="Phone">
                                                     </div>
                                                     <div class="form-group">
+                                                        <input type="text"
+                                                            name="description"value="{{ $provider?->description }}"
+                                                            class="form-control" placeholder="description">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <input type="text"
+                                                            name="avable_time"value="{{ $provider?->avable_time }}"
+                                                            class="form-control" placeholder="avable_time">
+                                                    </div>
+                                                    <div class="form-group">
                                                         <input type="password" name="password" class="form-control"
                                                             placeholder="Password (leave blank if not changing)">
                                                     </div>
@@ -257,12 +275,10 @@
                                                     <div class="form-group">
                                                         <label style="font-size: 13px; font-weight: bold;"
                                                             class="ml-3">SubCategory</label>
-                                                        <select name="sub_category_id"
-                                                            id="edit_sub_category_id{{ $provider->id }}"
-                                                            class="form-control">
+                                                        <select name="sub_category_id" class="form-control">
                                                             @foreach ($subCategories as $item)
                                                                 <option value="{{ $item->id }}">
-                                                                    {{ $item->title }}</option>
+                                                                    {{ $item->name }}</option>
                                                             @endforeach
                                                         </select>
                                                     </div>
@@ -378,45 +394,4 @@
 <!-- row closed -->
 @endsection
 @section('js')
-<script>
-    $(document).ready(function() {
-        // Function to fetch subcategories based on the selected category
-        function fetchSubCategories(categoryId, subCategorySelectId) {
-            $.ajax({
-                url: '/api/subcategories/' + categoryId, // Adjust the URL based on your API endpoint
-                method: 'GET',
-                success: function(data) {
-                    var options = '<option value="">Select SubCategory</option>';
-                    $.each(data, function(index, subCategory) {
-                        options += '<option value="' + subCategory.id + '">' + subCategory
-                            .name + '</option>';
-                    });
-                    $(subCategorySelectId).html(options);
-                }
-            });
-        }
-
-        // Event listener for the service select in the add modal
-        $('#job_id').change(function() {
-            var categoryId = $(this).val();
-            fetchSubCategories(categoryId, '#sub_category_id');
-        });
-
-        // Event listener for the service select in the edit modals
-        @foreach ($providers as $provider)
-            $('#edit_job_id{{ $provider->id }}').change(function() {
-                var categoryId = $(this).val();
-                fetchSubCategories(categoryId, '#edit_sub_category_id{{ $provider->id }}');
-            });
-
-            // Fetch initial subcategories for the edit modal
-            var initialCategoryId = $('#edit_job_id{{ $provider->id }}').val();
-            fetchSubCategories(initialCategoryId, '#edit_sub_category_id{{ $provider->id }}');
-        @endforeach
-
-        // Initialize subcategories for the add modal
-        var initialAddCategoryId = $('#job_id').val();
-        fetchSubCategories(initialAddCategoryId, '#sub_category_id');
-    });
-</script>
 @endsection
